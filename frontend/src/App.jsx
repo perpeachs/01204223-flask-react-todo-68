@@ -61,6 +61,25 @@ function App() {
     }
   }
 
+  async function addNewComment(todoId) {
+    try {
+      const url = `${TODOLIST_API_URL}${todoId}/comments/`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 'message': newComments[todoId] || "" }),
+      });
+      if (response.ok) {
+        setNewComments({ ...newComments, [todoId]: "" });
+        await fetchTodoList();
+      }
+    } catch (error) {
+      console.error("Error adding new comment:", error);
+    }
+  }
+
   async function deleteTodo(id) {
     const delete_api_url = `${TODOLIST_API_URL}${id}/`
     try {
@@ -84,9 +103,6 @@ function App() {
             <span className={todo.done ? "done" : ""}>{todo.title}</span>
             <button onClick={() => {toggleDone(todo.id)}}>Toggle</button>
             <button onClick={() => {deleteTodo(todo.id)}}>❌</button>
-
-            {/* ************** เพิ่มส่วนแสดงรายการ comment ที่ตรงนี้ *********** */}
-
             {(todo.comments) && (todo.comments.length > 0) && (
               <>
                 <b>Comments:</b>
@@ -97,8 +113,6 @@ function App() {
                 </ul>
               </>
             )}
-            {/* ******************************************************* */}
-            {/* ** เพิ่มส่วนนี้ ** */}                
             <div className="new-comment-forms">
               <input
                 type="text"
@@ -108,13 +122,10 @@ function App() {
                   setNewComments({ ...newComments, [todo.id]: value });
                 }}
               />
-
-              {/* *** ปุ่มนี้ทดสอบว่าอัพเดท state newComments ถูกต้อง *** */}
-              <button onClick={() => {alert(newComments[todo.id])}}>Add Comment</button>
+            <button onClick={() => {addNewComment(todo.id)}}>Add Comment</button>
             </div>
-            {/* ************************************************************ */}
-
-            {/* ************** สิ้นสุดส่วนที่เพิ่ม *********** */}
+            {/* ************** */}
+            
           </li>
         ))}
       </ul>
