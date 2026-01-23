@@ -2,8 +2,8 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import DeclarativeBase,Mapped,mapped_column
-from sqlalchemy import Integer, String,Boolean
+from sqlalchemy.orm import DeclarativeBase,Mapped,mapped_column,relationship
+from sqlalchemy import Integer, String,Boolean,ForeignKey
 
 app = Flask(__name__)
 CORS(app)
@@ -19,12 +19,26 @@ class TodoItem(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(String(100))
     done: Mapped[bool] = mapped_column(default=False)
+    comments: Mapped[list["Comment"]]=relationship("Comment",back_populates="todo_item")
     def to_dict(self):
         return {
             "id":self.id,
             "title":self.title,
-            "done":self.done
+            "done":self.done,
+            "comment":[comment.to_dict() for comment in self.comments]
         }
+class Comment(db.Model):
+    id:Mapped[int] = mapped_column(Integer,primary_key=True)
+    message: Mapped[str] = mapped_column(String(250))
+    todo_id: Mapped[int] = mapped_column(ForeignKey('todos_items.id'))
+    todo_item: Mapped["TodoItem"] = relationship("TodoItem", back_populates="comments")
+    def to_dict(self):
+        return {
+            "id":self.id,
+            "message":self.message,
+            "todo_id":self.todo_id
+        }
+
 
 INITIAL_TODOS=[
     TodoItem(title='Learn Flask'),
