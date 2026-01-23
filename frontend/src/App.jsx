@@ -8,6 +8,7 @@ function App() {
 
   const [todoList, setTodoList] = useState([]);
   const [newTitle, setNewTitle] = useState("");
+  const [newComments, setNewComments] = useState({});
 
   useEffect(() => {
     fetchTodoList();
@@ -96,6 +97,22 @@ function App() {
                 </ul>
               </>
             )}
+            {/* ******************************************************* */}
+            {/* ** เพิ่มส่วนนี้ ** */}                
+            <div className="new-comment-forms">
+              <input
+                type="text"
+                value={newComments[todo.id] || ""}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setNewComments({ ...newComments, [todo.id]: value });
+                }}
+              />
+
+              {/* *** ปุ่มนี้ทดสอบว่าอัพเดท state newComments ถูกต้อง *** */}
+              <button onClick={() => {alert(newComments[todo.id])}}>Add Comment</button>
+            </div>
+            {/* ************************************************************ */}
 
             {/* ************** สิ้นสุดส่วนที่เพิ่ม *********** */}
           </li>
