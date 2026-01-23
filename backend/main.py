@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase,Mapped,mapped_column
 from sqlalchemy import Integer, String,Boolean
@@ -12,6 +13,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todos.db'
 class Base(DeclarativeBase):
   pass
 db = SQLAlchemy(app, model_class=Base)
+migrate = Migrate(app,db)
 class TodoItem(db.Model):
     __tablename__ = 'todos_items'
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -23,8 +25,7 @@ class TodoItem(db.Model):
             "title":self.title,
             "done":self.done
         }
-with app.app_context():
-    db.create_all()
+
 INITIAL_TODOS=[
     TodoItem(title='Learn Flask'),
     TodoItem(title='Build a Flask App'),
