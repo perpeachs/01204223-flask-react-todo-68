@@ -83,6 +83,21 @@ function App() {
             <span className={todo.done ? "done" : ""}>{todo.title}</span>
             <button onClick={() => {toggleDone(todo.id)}}>Toggle</button>
             <button onClick={() => {deleteTodo(todo.id)}}>❌</button>
+
+            {/* ************** เพิ่มส่วนแสดงรายการ comment ที่ตรงนี้ *********** */}
+
+            {(todo.comments) && (todo.comments.length > 0) && (
+              <>
+                <b>Comments:</b>
+                <ul>
+                  {todo.comments.map(comment => (
+                    <li key={comment.id}>{comment.message}</li>
+                  ))}
+                </ul>
+              </>
+            )}
+
+            {/* ************** สิ้นสุดส่วนที่เพิ่ม *********** */}
           </li>
         ))}
       </ul>
