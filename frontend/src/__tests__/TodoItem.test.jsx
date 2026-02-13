@@ -45,7 +45,7 @@ describe('TodoItem', () => {
       ]
     };
     render(
-      <TodoItem todo={todoWithComment} />
+      <TodoItem todo={todoWithComments} />
     );
     expect(screen.queryByText('No comments')).not.toBeInTheDocument();
     
