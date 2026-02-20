@@ -12,10 +12,11 @@ from flask_jwt_extended import JWTManager
 app = Flask(__name__)
 CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todos.db'
-app.config['JWT_SECRET_KEY'] = 'fdsjkfjioi2rjshr2345hrsh043j5oij5545'
-jwt = JWTManager(app)
+
 db.init_app(app)                                               
 migrate = Migrate(app, db)
+app.config['JWT_SECRET_KEY'] = 'fdsjkfjioi2rjshr2345hrsh043j5oij5545'
+jwt = JWTManager(app)
 @app.route('/api/login/', methods=['POST'])
 def login():
     data = request.get_json()
@@ -25,13 +26,13 @@ def login():
     user = User.query.filter_by(username=data['username']).first()
     if not user or not user.check_password(data['password']):
         return jsonify({'error': 'Invalid username or password'}), 401
+    access_token = create_access_token(identity=user.username)
 
-    return jsonify({'message': 'Login successful'})
-@app.route('/api/todos/', methods=['GET'])
-@jwt_required()
-def get_todos():
-    todos = TodoItem.query.all()
-    return jsonify([todo.to_dict() for todo in todos])
+    return jsonify({
+        'message': 'Login successful',
+        'access_token': access_token
+    })
+
 # todo_list = [
 #     { "id": 1,
 #       "title": 'Learn Flask',
@@ -42,6 +43,7 @@ def get_todos():
 # ]
 
 @app.route('/api/todos/', methods=['GET'])
+@jwt_required()
 def get_todos():
     todos = TodoItem.query.all()
     return jsonify([todo.to_dict() for todo in todos])
@@ -71,6 +73,7 @@ def get_todos():
 #         # return http response code 400 for bad requests
 #         return (jsonify({'error': 'Invalid todo data'}), 400)
 @app.route('/api/todos/', methods=['POST'])
+
 def add_todo():
     data = request.get_json()
 
@@ -87,18 +90,21 @@ def add_todo():
 
     return jsonify(new_todo.to_dict()), 201  
 @app.route('/api/todos/<int:id>/toggle/', methods=['PATCH'])
+
 def toggle_todo(id):
     todo = TodoItem.query.get_or_404(id)
     todo.done = not todo.done
     db.session.commit()
     return jsonify(todo.to_dict())
 @app.route('/api/todos/<int:id>/', methods=['DELETE'])
+
 def delete_todo(id):
     todo = TodoItem.query.get_or_404(id)
     db.session.delete(todo)
     db.session.commit()
     return jsonify({'message': 'Todo deleted successfully'})
 @app.route('/api/todos/<int:todo_id>/comments/', methods=['POST'])
+
 def add_comment(todo_id):
     todo_item = TodoItem.query.get_or_404(todo_id)
 
