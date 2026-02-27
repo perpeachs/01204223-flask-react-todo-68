@@ -12,11 +12,11 @@ from flask_jwt_extended import JWTManager
 
 app = Flask(__name__)
 CORS(app)
-app.config['SQLALCHEMY_DATABASE_URI'] =  os.getenv('SQLALCHEMY_DATABASE_URI','')
+app.config['SQLALCHEMY_DATABASE_URI'] =  os.getenv('SQLALCHEMY_DATABASE_URI','sqlite:///todos.db')
 
 db.init_app(app)                                               
 migrate = Migrate(app, db)
-app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY','fdslkfjsdlkufewhjroiewurewrew')
 jwt = JWTManager(app)
 @app.route('/api/login/', methods=['POST'])
 def login():
