@@ -12,7 +12,7 @@ from flask_jwt_extended import JWTManager
 
 app = Flask(__name__)
 CORS(app)
-app.config['SQLALCHEMY_DATABASE_URI'] =  os.getenv('SQLALCHEMY_DATABASE_URI')
+app.config['SQLALCHEMY_DATABASE_URI'] =  os.getenv('SQLALCHEMY_DATABASE_URI','')
 
 db.init_app(app)                                               
 migrate = Migrate(app, db)
