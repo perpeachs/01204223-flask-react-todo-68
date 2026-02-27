@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_migrate import Migrate
 import click
+import os
 # from flask_sqlalchemy import SQLAlchemy
 # from sqlalchemy.orm import DeclarativeBase,Mapped,mapped_column,relationship
 # from sqlalchemy import Integer, String,Boolean,ForeignKey
@@ -11,11 +12,11 @@ from flask_jwt_extended import JWTManager
 
 app = Flask(__name__)
 CORS(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todos.db'
+app.config['SQLALCHEMY_DATABASE_URI'] =  os.getenv('SQLALCHEMY_DATABASE_URI')
 
 db.init_app(app)                                               
 migrate = Migrate(app, db)
-app.config['JWT_SECRET_KEY'] = 'fdsjkfjioi2rjshr2345hrsh043j5oij5545'
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 jwt = JWTManager(app)
 @app.route('/api/login/', methods=['POST'])
 def login():
